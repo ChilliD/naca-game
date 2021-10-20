@@ -1,0 +1,152 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-size: 16px;
+    margin: 0; 
+    padding-bottom: 3rem; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    background-color: #353b48;
+}
+
+.game-canvas {
+    background-color: green;
+    border: 2px solid black;
+}
+
+.users-bar {
+    background-color: #2f3640;
+    border: .75rem solid #2a313a;
+    position: absolute;
+    top: 0;
+    left: 604px;
+    height: 404px;
+    width: 20%;
+}
+
+.users-head {
+    text-align: center;
+    color: #44bd32;
+    padding: .5rem;
+    border-bottom: .25rem solid #2a313a;
+}
+
+.users-list {
+    list-style-type: none;
+    color: #0097e6;
+    overflow: scroll;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: .25rem .5rem;
+}
+
+.users-list > li {
+    padding: .25rem 0;
+}
+
+.chat-wrap {
+    height: 12em;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #2f3640;
+    border-top: 2px solid #000000;
+}
+
+.text-input { 
+    border: none; 
+    padding: 0 1rem; 
+    flex-grow: 1; 
+    border-radius: 2rem; 
+    margin: 0.25rem; 
+}
+
+.text-input:focus {
+    outline: none;
+}
+
+.send-btn { 
+    background: #333; 
+    border: none; 
+    padding: 0 1rem; 
+    margin: 0.25rem; 
+    border-radius: 3px; 
+    outline: none; 
+    color: #fff;
+}
+
+.messages {
+    list-style-type: none; 
+    margin: 0; 
+    padding: 0;
+    height: 70%;
+    overflow: scroll;
+    color: #f5f6fa;
+}
+
+.messages > li { 
+    padding: 0.5rem 1rem;
+}
+
+.messages > li:nth-child(odd) { 
+    background: #2a313a; 
+}
+
+.form { 
+    background: rgba(0, 0, 0, 0.15); 
+    padding: 0.25rem; 
+    position: fixed; 
+    bottom: 0; 
+    left: 0; 
+    right: 0;
+    display: flex; 
+    height: 3rem; 
+    box-sizing: border-box; 
+    backdrop-filter: blur(10px); 
+}
+
+a {
+    text-decoration: none;
+}
+
+/* LOGIN SCREEN */
+
+.login-wrap {
+    margin: auto;
+    width: 60%;
+    height: auto;
+    background-color: #718093;
+    text-align: center;
+    border-radius: 2rem;
+    padding: 1rem;
+    font-size: 1.2em;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.name-input {
+    margin: 1rem;
+    font-size: 1.2em;
+}
+
+.login-btn {
+    background-color: #c23616;
+    color: #f5f6fa;
+    border-radius: 1rem;
+    border-left: 2px solid #e84118;
+    border-top: 2px solid #e84118;
+    font-size: 1.5em;
+    padding: .5rem;
+}
+
+.login-btn:active {
+    border-top: 2px solid #353b48;
+    border-left: 2px solid #353b48;
+    border-right: 2px solid #e84118;
+    border-bottom: 2px solid #e84118;
+}
