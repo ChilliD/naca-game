@@ -1,8 +1,9 @@
-let socket = io();
+var socket = io();
 let form = document.getElementById('form');
 let input = document.getElementById('input');
 let messages = document.getElementById('messages');
 let username = localStorage.getItem('user');
+let color = localStorage.getItem('color');
 
 function resetList(parent) {
     while (parent.lastChild) {
@@ -10,7 +11,7 @@ function resetList(parent) {
     }
 };
 window.onload = function() {
-    socket.emit('join', username);
+    socket.emit('join', username, color);
 }
 
 form.addEventListener('submit', function(e) {
@@ -33,10 +34,11 @@ socket.on('update-users', function(users) {
     });
 });
 
-socket.on('update', function(msg) {
+socket.on('update',  function(color, msg) {
     let update = document.createElement('li');
     let chatWindow = document.getElementById('messages');
     update.textContent = msg;
+    update.style.color = color;
     messages.appendChild(update);
     chatWindow.scrollTo(0, chatWindow.scrollHeight);
 });

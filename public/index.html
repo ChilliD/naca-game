@@ -14,11 +14,31 @@
         </div>
         <form id="login" action="">
             <input id="username" class="name-input" placeholder="Select Username"><br />
+            <div class="input-wrap">
+                <label for="color">Choose a Color</label>
+                <input id="color-picker" class="color-picker" type="color" name="color">
+            </div>
             <button id="join" class="login-btn">Login</button>
         </form>
     
     </section>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="login.js"></script>
+    <script>
+        let login = document.getElementById('login');
+        let username = document.getElementById('username');
+        let colorPicker = document.getElementById('color-picker');
+
+        login.addEventListener('submit', function(e) {
+            e.preventDefault();
+            let name = username.value;
+            let color = colorPicker.value;
+            if (name != '') {
+                localStorage.setItem('user', name);
+                localStorage.setItem('color', color);
+                window.location = "app.html";
+            }
+        });
+
+    </script>
 </body>
 </html>
