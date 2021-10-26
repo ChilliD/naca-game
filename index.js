@@ -4,7 +4,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
-const PORT = 3000 || process.env.PORT;
+const PORT = process.env.PORT || 3000;
 let users = {};
 const green =  '#4cd137';
 const red = '#e84118';
@@ -50,4 +50,4 @@ io.on('connection', (client) => {
     });
 });
 
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, "127.0.0.1",  () => console.log(`Server running on port ${PORT}`));
