@@ -9,11 +9,16 @@
 </head>
 <body>
     <section id="game-window" class="game-window">
-        <canvas id="canvas" class="game-canvas"></canvas>
+        <div id="canvas-wrap" class="canvas-wrap">
+            <canvas id="canvas" class="game-canvas"></canvas>
+        </div>
         <div id="users-bar" class="users-bar">
             <div id="active-users" class="users-head"></div>
             <ul id="users-list" class="users-list"></ul>
         </div>
+    </section>
+    <section class="info-box">
+        <p>W A S D to move</p>
     </section>
     <section id="chat-box" class="chat-wrap">
         <ul id="messages" class="messages"></ul>

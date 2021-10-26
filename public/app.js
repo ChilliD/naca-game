@@ -3,8 +3,8 @@ const ctx = canvas.getContext('2d');
 const WIDTH = 600;
 const HEIGHT = 400;
 const charScale = 1.5;
-const wChar = 64;
-const hChar = 64;
+const wChar = 16;
+const hChar = 16;
 const scaledCharWidth = charScale * wChar;
 const scaledCharHeight = charScale * hChar;
 const charLoop = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -14,98 +14,176 @@ const CHAR_UP = 0;
 const CHAR_LEFT = 1;
 const CHAR_RIGHT = 3;
 
-let charSpeed = 3;
-let charX = 150;
-let charY = 100;
+let charSpeed = 6;
+//let charX = 150;
+//let charY = 100;
 let currentLoopIndex = 0;
 let charFrameCount = 0;
 let charDirection = CHAR_DOWN;
-let keyPresses = {};
+let keyDown = {};
 let imgChar = new Image();
+let players = [];
+let currentPlayer;
+let chosenColor = localStorage.getItem('color');
 
-window.addEventListener('keydown', keyDownListener, true);
-function keyDownListener(event) {
-    keyPresses[event.key] = true;
-}
+class Player {
+    constructor(name, color, posX, posY) {
+        this.state = {
+            name: name,
+            color: color,
+            charSpeedX: 6,
+            charSpeedY: 6,
+            charX: posX,
+            charY: posY,
+            charLoop: charLoop,
+            currentLoopIndex: currentLoopIndex,
+            charFrameCount: charFrameCount,
+            charDirection: charDirection
+        }
+    }
 
-window.addEventListener('keyup', keyUpListener, true);
-function keyUpListener(event) {
-    keyPresses[event.key] = false;
-}
+    draw(x, y) {
+        ctx.beginPath();
+        ctx.arc(x, y, 10, 0, Math.PI*2);
+        ctx.fillStyle = this.state.color;
+        ctx.fill();
+        ctx.closePath();
+    }
 
-function loadImg() {
-    imgChar.src = '/assets/BODY_male.png';
-    imgChar.onload = function() {
-        window.requestAnimationFrame(charStep);
-    };
-}
+    drawChat(msg) {
+        let msgBox = document.createElement('div');
+        let gameWindow = document.getElementById('canvas-wrap');
+        msgBox.id = Math.random() + '-msg';
+        let msgId = msgBox.id;
+        msgBox.classList.add('chat-box');
+        msgBox.innerText = msg;
+        msgBox.style.position = 'absolute';
 
-function drawFrame(frameX, frameY, canvasX, canvasY) {
-    ctx.drawImage(imgChar,
-        frameX * wChar, frameY * hChar, wChar, hChar,
-        canvasX, canvasY, scaledCharWidth, scaledCharHeight);
-}
-
-function charStep() {
-    clear();
-
-    let hasMoved = false;
-
-    if (document.activeElement.id != 'input') {
-        if (keyPresses.w) {
-            if (charY - charSpeed > 0 - hChar / 2) { 
-                charY -= charSpeed;
-                charDirection = CHAR_UP;
-                hasMoved = true;
-            }
-        } else if (keyPresses.s) {
-            if (charY + charSpeed < HEIGHT - scaledCharHeight) { 
-                charY += charSpeed;
-                charDirection = CHAR_DOWN;
-                hasMoved = true;
-            }
+        let drawMsg = () => {
+            msgBox.style.top = this.state.charY - (hChar * 3) + 'px';
+            msgBox.style.left = this.state.charX - (wChar) + 'px';
+            gameWindow.appendChild(msgBox);
+        }
+        
+        function deleteMsg() {
+            clearInterval(showMsg);
+            let message = document.getElementById(msgId);
+            gameWindow.removeChild(message);
         }
 
-        if (keyPresses.a) {
-            if (charX - charSpeed > 0 - wChar / 2) {
-                charX -= charSpeed;
-                charDirection = CHAR_LEFT;
-                hasMoved = true;
-            }
-        } else if (keyPresses.d) {
-            if (charX + charSpeed < WIDTH - wChar) {
-                charX += charSpeed;
-                charDirection = CHAR_RIGHT;
-                hasMoved = true;
-            }
-        }
+        let showMsg = setInterval(drawMsg, 10);
 
-        if (hasMoved) {
-            charFrameCount++;
-            if (charFrameCount >= FRAME_LIMIT) {
-                charFrameCount = 0;
-                currentLoopIndex++;
-                if (currentLoopIndex >= charLoop.length) {
-                    currentLoopIndex = 1;
+        setTimeout(deleteMsg, 3000);
+    }
+
+    charStep = () => {
+        let { charSpeedX, charSpeedY, charY, charX } = this.state;
+
+        if (document.activeElement.id != 'input') {
+            
+            if (keyDown[87]) {
+                if (charY - charSpeed > 0 - hChar / 2) { 
+                    charSpeedX = 0;
+                    charY -= charSpeedY;
+                }
+            } else if (keyDown[83]) {
+                if (charY + charSpeed < HEIGHT - scaledCharHeight) { 
+                    charSpeedX = 0;
+                    charY += charSpeedY;
                 }
             }
-        } else {
-            currentLoopIndex = 0;
+
+            if (keyDown[65]) {
+                if (charX - charSpeed > 0 - wChar / 2) {
+                    charSpeedY = 0;
+                    charX -= charSpeedX;
+                }
+            } else if (keyDown[68]) {
+                if (charX + charSpeed < WIDTH - wChar) {
+                    charSpeedY = 0;
+                    charX += charSpeedX;
+                } 
+            }
+
+            this.state.charX = charX;
+            this.state.charY = charY;
         }
+
+        socket.emit('update-player-pos', this.state);
+        window.requestAnimationFrame(this.charStep);
+
+    }
+    
 }
 
-    drawFrame(charLoop[currentLoopIndex], charDirection, charX, charY);
-    window.requestAnimationFrame(charStep);
+window.addEventListener('keydown', keyDownListener);
+function keyDownListener(event) {
+    keyDown[event.keyCode] = true;
+}
+
+window.addEventListener('keyup', keyUpListener);
+function keyUpListener(event) {
+    keyDown[event.keyCode] = false;
 }
 
 function init() {
     canvas.width = 600;
     canvas.height = 400;
-    loadImg();
+
+    currentPlayer = new Player(username, chosenColor, 100, 150);
+    socket.emit('new-player', currentPlayer);
 }
 
 function clear() {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 }
+
+function drawPlayers() {
+    clear();
+    players.forEach(p => {
+        p.draw(p.state.charX, p.state.charY);
+    });
+}
+
+socket.on('existing-players', function(playersArr) {
+    playersArr.forEach(p => {
+        player = new Player(p.state.name, p.state.color, p.state.charX, p.state.charY);
+        players.push(player);
+        drawPlayers();
+    });
+});
+
+socket.on('set-user', function(username, color) {
+    currentPlayer.state.name = username;
+    currentPlayer.state.color = color;
+});
+
+socket.on('create-player', function() {
+    window.requestAnimationFrame(currentPlayer.charStep);
+});
+
+socket.on('create-new-player', function(p) {
+    player = new Player(p.state.name, p.state.color, p.state.charX, p.state.charY);
+    players.push(player);
+    drawPlayers();
+});
+
+socket.on('delete-player', function(user) {
+    let playerIndex = players.findIndex(p => p.state.name === user);
+    players.splice(playerIndex, 1);
+    drawPlayers();
+});
+
+socket.on('update-player-pos', function(playerState) {
+    let playerMove = players.find(p => p.state.name === playerState.name);
+    playerMove.state = playerState;
+    drawPlayers();
+});
+
+socket.on('sendMsg', function(username, msg) {
+    let user = players.find(p => p.state.name === username);
+    user.drawChat(msg);
+});
+
 
 init();
