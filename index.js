@@ -32,7 +32,7 @@ io.on('connection', (client) => {
 
     client.on('update-player-pos', function(playerData) {
         let playerMoved = players.find(p => p.state.name === playerData.name);
-        playerMoved.state = playerData;
+        playerMoved = playerData;
         io.sockets.emit('update-player-pos', playerData);
     });
 
