@@ -108,7 +108,6 @@ class Player {
             this.state.charX = charX;
             this.state.charY = charY;
         }
-
         socket.emit('update-player-pos', this.state);
         window.requestAnimationFrame(this.charStep);
 
